@@ -9,11 +9,24 @@
 #include <map>
 #include <vector>
 #include <utility>
-
+#include <string>
+#include <set>
+#include <iostream>
+#include "MutexLock.h"
 namespace wd
 {
-class MyConf
+MyConf* MyConfig::pInstance = 0;
+class MyConf 
 {
+public:
+	MyConf(const std::string& name);
 
+	void indexToMap(int &i, std::map<std::string ,set<int> > &map_);
+	std::map<std::string, std::string> & getMap();
+private:
+	std::map< std::string, std::string > map_;//存放配置文件内容
+	std::vector< std::pair< std::string, int > > vec_;//存放字典文件内容
+	std::map< std::string, std::set<int> > index_;
+	std::ifstream fin;
 };
 }
