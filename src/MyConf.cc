@@ -10,7 +10,7 @@
 
 namespace wd
 {
-MyConf(const string& name)
+MyConf::MyConf(const string& name)
 {
 	//读配置文件
 	std::string tmp;
@@ -48,7 +48,7 @@ MyConf(const string& name)
 
 }
 
-void indexToMap(int &i, map<string,set<int> >& map)
+void MyConf::indexToMap(int &i, map<string,set<int> >& map)
 {
 	std::string str = vec_[i].first;
 	for(size_t index = 0; index != vec_[i].first.size())
@@ -76,6 +76,11 @@ void indexToMap(int &i, map<string,set<int> >& map)
 			return ;
 		}
 	}
+}
+
+std::map<std::string, std::string>& MyConf::get_map()
+{
+	return map_;
 }
 
 }
