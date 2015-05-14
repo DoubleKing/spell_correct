@@ -12,10 +12,8 @@
 #include <string>
 #include <set>
 #include <iostream>
-#include "MutexLock.h"
 namespace wd
 {
-MyConf* MyConfig::pInstance = 0;
 class MyConf 
 {
 public:
@@ -26,7 +24,7 @@ public:
 private:
 	std::map< std::string, std::string > map_;//存放配置文件内容
 	std::vector< std::pair< std::string, int > > vec_;//存放字典文件内容
-	std::map< std::string, std::set<int> > index_;
-	std::ifstream fin;
+	std::map< std::string, std::set<int> > index_;//索引
+	std::ifstream fin_;
 };
 }
