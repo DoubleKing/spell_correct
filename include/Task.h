@@ -6,28 +6,54 @@
  ************************************************************************/
 #pragma once
 
-#include "MyResult.h"
-#include <string>
-#include <netinet/in.h>
-#include <vector>
 #include <queue>
-
+#include <set>
+#include <string>
 namespace wd
 {
+class Cache;
+class Mydic;
+
+struct MyResult
+{
+	std::string word_;
+	int dist_;
+	int frequence_;
+};
+class MyCompare
+{
+public:
+	bool operator()(const MyResult &left ,const MyResult& right)
+	{
+		if(left.dist_ > right.dist_)
+			return true
+		else if (left.dist_ == right.dist_ && 
+				left.frequence_ > right.frequence_)
+			return true;
+		else if (left.dist_ == right.dist_ && 
+				left.frequence_ ==  right.frequence_ &&
+				left.word_ > right.word_)
+			return true;
+		else
+			return false;
+	}
+};
 class Task
 {
 public:
-	Task(MyConf& conf);
-	void excute(MyCache& cache);
-	void satistic(set<int>& iset);
-	int editdistance(const string& right);
-	void get_result();
+	Task(const std::string &expr ,int sockfd , MyDic &mydic);
+	Task(const char*expr, int sockfd , MyDic &mydic);
+
+	void excute(/*MyCache& cache*/);
 private:
-	std::string express_;
-	struct sockaddr_in addr_;
-	int fd_;
-	std::vector<pair<std::string,int> >* vec_;
-	std::map<std::string, set<int> >* index_;
-	std::priority_queue<MyResult, vector<MyResult> ,MyCompare> result_;
+	void query_idx_table();
+	void satistic(set<int>& iset);
+	int distance(const std::string& right);
+	void response(/*Cache &cache*/);
+private:
+	std::string expr_;
+	int sockfd_;
+	MyDic &mydic_;
+	std::priority_queue<MyResult, vector<MyResult> ,MyCompare> que_res_;
 };
 }

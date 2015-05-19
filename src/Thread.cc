@@ -1,16 +1,11 @@
-/*********************************
- *@fileName: Thread.cc
- *@author  : lemon
- *@email   : haohb13@gmail.com
- *@created : 2015-05-08 11:08:04
-**********************************/
 
 #include "Thread.h"
 
 namespace wd
 {
-Thread::Thread()
-	: pthId_(0),
+Thread::Thread(ThreadCallback callback)
+	: threadId_(0),
+	  callback_(callback),
 	  isRunning_(false)
 {}
 
@@ -34,7 +29,7 @@ void Thread::join()
 void *Thread::runInThread(void *arg)
 {
 	Thread *pThread = static_cast<Thread *>(arg);
-	pThread->run();
+	pThread->callback_();
 
 	return NULL;
 }

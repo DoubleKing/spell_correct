@@ -6,38 +6,47 @@
  ************************************************************************/
 #pragma once
 
+#include "MyDic.h"
 #include "Noncopyable.h"
 #include "MutexLock.h"
 #include "Condition.h"
 #include "MyConf.h"
 #include <vector>
 #include <queue>
+
 namespace wd
 {
 class Thread;
+class MyDic;
 
 class ThreadPool : private Noncopyable
 {
 public:
-	ThreadPool( std::size_t threadsNum);
-	~ThreadPool();
+	ThreadPool( std::size_t threadsNum /*,Cache &cache */,MyDic &mydic);
 
 	void start();
-	void stop();
-	void addTask(Task * task);
-	Task * getTask();
-	void runInThread();
 
+	void addTask(Task task);
+	Task  getTask();
+
+	void runInThread(/*Cache &cache*/);
+
+//	void update();
 private:
-	std::vector<Thread *> threadsVec_;
-	std::queue<Task> tasks_;
 	MutexLock mutex_;
 	Condition cond_;
-	std::size_t threadsNum_;
-	bool isStarting_;
 
-	//MyCacheThread cacheThread_;
-	MyConf& conf_;
+	std::queue<Task> queue_;
+
+	std::size_t threadsNum_;
+	std::vector<Thread * > threads_;
+	bool isStarted_;
+
+//	Cache cache_;
+
+public:
+	MyDic &mydict_;
+	
 };
 
 }//end namespace wd

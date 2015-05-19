@@ -14,18 +14,23 @@ namespace wd
 class Thread : private Noncopyable //public继承：接口继承；private继承：实现继承
 {//实现了它的对象语义
 public:
-	Thread();
-	virtual ~Thread();
+	typedef std::function<void(/*Cache &*/)> ThreadCallback;
+
+	Thread(ThreadCallback callback/* ,Cache &cache*/);
+	 ~Thread();
 
 	void start();
 	void join();
-	virtual void run()=0;
-
-	static void *runInThread(void *);
+	
+//	Cache &get_cache();
 
 private:
-	pthread_t pthId_;
+	static void *runInThread(void *);
+
+	pthread_t threadId_;
 	bool isRunning_;
+	ThreadCallback callback;
+//	Cache cache_;
 };
 
 }// end namespace wd

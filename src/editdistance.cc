@@ -1,12 +1,13 @@
-/*************************************************************************
-	> File Name: Task.cc
-	> Author: DoubleKing
-	> Mail:971774262@qq.com 
-	> Created Time: Thu 14 May 2015 07:44:05 AM PDT
- ************************************************************************/
-#include "Task.h"
-namespace wd
-{
+/*********************************
+ *@fileName: editdistance.cc
+ *@author  : lemon
+ *@email   : haohb13@gmail.com
+ *@created : 2015-05-13 20:17:40
+**********************************/
+
+#include <iostream>
+#include <string>
+
 
 std::size_t nBytesCode(const char ch)
 {
@@ -60,37 +61,9 @@ int tripleMin(const int &a, const int &b, const int &c)
 }
 
 
-
-
-Task::Task(const std::string &expr ,int sockfd ,MyDic &mydic)
-	:expr_(expr),
-	 sockfd_(sockfd),
-	 mydic_(mydic)
-	{}
-
-void Task:: execute()
+int calcDistance(const std::string &lhs, const std::string &rhs)
 {
-	query_idx_table();
-	responce();
-}
-void Task::responce()
-{
-	if(!que_res_.empty())
-	{
-		MyResult tmp = que_res_.top();
-		send(sockfd_,tmp.word_c_str(),tmp.size(),0);
-	}
-	else
-	{
-		char buf[]="not found!!";
-		send(sockfd_,buf,sizeof(buf),0);
-	}
-}
-
-int Task::distance(const std::string &rhs)
-{
-
-	std::size_t lhsLen = length(expr_);
+	std::size_t lhsLen = length(lhs);
 	std::size_t rhsLen = length(rhs);
 	
 	int editDisArray[lhsLen + 1][rhsLen + 1];
@@ -109,8 +82,8 @@ int Task::distance(const std::string &rhs)
 
 	for(std::size_t iIdx = 1, lhsIdx = 0; iIdx <= lhsLen; ++iIdx)
 	{
-		size_t nBytes = nBytesCode(expr_[lhsIdx]);
-		sublhs = expr_.substr(lhsIdx, nBytes);
+		size_t nBytes = nBytesCode(lhs[lhsIdx]);
+		sublhs = lhs.substr(lhsIdx, nBytes);
 		lhsIdx += nBytes;
 
 		for(std::size_t jIdx = 1, rhsIdx = 0; jIdx <= rhsLen; ++jIdx)
@@ -136,31 +109,22 @@ int Task::distance(const std::string &rhs)
 	return editDisArray[lhsLen][rhsLen];
 }
 
-void Task::query_idx_table()
+
+int main(void)
 {
-	std::size_t exprlen = length(expr_);
-	std::string subexpr;
-	for(std::size_t exprIdx = 0; exprIdx <= exprlen ;)
-	{
-		size_t nBytes = nBytesCode(expr_(exprIdx));
-		subexpr = expr_.substr(exprIdx,nBytes);
-		exprIdx += nBytes;
-		statistic(mydic_.index_.find(substr)->second);
-	}
-}
-void statistic(std::set<int> &iset)
-{
-	for(int idx : iset)
-	{
-		int dis = distance(mydic_.dic_[idx].first);
-		if(dis < 3)
-		{
-			MyResult myres;
-			myres.word_ = mydic_.dic_[idx].first;
-			myres.dist_ = dis;
-			myres.frequence_ = mydic_.dic_[inx].second;
-			que_res_.push(myres);
-		}
-	}
-}
+	std::string s1 = "我是：中国人";
+	std::string s2 = "我是中国人abandon";
+	
+	std::cout << "s1's size = " << s1.size() << std::endl;
+	std::cout << "s1's length = " << length(s1) << std::endl;
+	std::cout << "s2's size = " << s2.size() << std::endl;
+	std::cout << "s2's length = " << length(s2) << std::endl;
+	std::cout << "s1 and s2 's distance = " << calcDistance(s1, s2) << std::endl;
+#if 0
+	std::string s3 = "hello";
+	std::string s4 = "helxly";
+	std::cout << "s3 and s4 's distance = " << calcDistance(s3, s4) << std::endl;
+#endif
+
+	return 0;
 }
