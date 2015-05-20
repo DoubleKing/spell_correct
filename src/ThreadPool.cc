@@ -6,13 +6,14 @@ ThreadPool::ThreadPool(
 		std::size_t threadsNum,
 		MyDic &mydic
 		)
-	: threadsNum_(threadsNum),
-	  mydic_(mydic),
-	  isStarting_(false)
+	: cond_(mutex_),
+	  threadsNum_(threadsNum),
+	  isStarted_(false),
+	  mydic_(mydic)
 {
 	for(std::size_t idx = 0; idx != threadsNum_; ++idx)
 	{
-		Thread *pThread = new Thread(std::bind(&Threadpool::runInThread,this));
+		Thread *pThread = new Thread(std::bind(&ThreadPool::runInThread,this));
 		threads_.push_back(pThread);
 	}
 }
@@ -24,20 +25,20 @@ void ThreadPool::start()
 	{
 		(*it)->start();
 	}
-	isStarting_ = true;
+	isStarted_ = true;
 }
 
 void ThreadPool::addTask(Task task)
 {
 	MutexLockGuard mutexGuard(mutex_);
-	tasks_.push(task);
+	queue_.push(task);
 	cond_.notify();
 }
 
 Task ThreadPool::getTask()
 {
 	MutexLockGuard mutexGuard(mutex_);
-	while(tasks_.empty())
+	while(queue_.empty())
 		cond_.wait();
 	Task tmp = queue_.front();
 	queue_.pop();
@@ -46,8 +47,10 @@ Task ThreadPool::getTask()
 
 void ThreadPool::runInThread()
 {
+	std::cout <<"Thread  Run "<<std::endl;
 	while(1){
 		Task task = getTask();
+		std::cout <<"get task"<<std::endl;
 		task.execute();
 	}
 }

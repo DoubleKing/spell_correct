@@ -5,24 +5,24 @@ namespace wd
 {
 Thread::Thread(ThreadCallback callback)
 	: threadId_(0),
-	  callback_(callback),
-	  isRunning_(false)
+	  isRunning_(false),
+	  callback_(callback)
 {}
 
 Thread::~Thread()
 {
-	pthread_detach(pthId_);
+	pthread_detach(threadId_);
 }
 
 void Thread::start()
 {
-	pthread_create(&pthId_,NULL, runInThread, this);
+	pthread_create(&threadId_,NULL, runInThread, this);
 	isRunning_ = true;
 }
 
 void Thread::join()
 {
-	pthread_join(pthId_, NULL);
+	pthread_join(threadId_, NULL);
 	isRunning_ = false;
 }
 

@@ -1,12 +1,14 @@
 #include "EpollPoller.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/socket.h>
 #include <string.h>
 #include <sys/epoll.h>
 #include <unistd.h>
 #include <errno.h>
+#include <netinet/in.h>
 #include <assert.h>
-
+#include <arpa/inet.h>
 namespace
 {
 int createEpollFd()
@@ -47,7 +49,9 @@ void delEpollReadFd(int epollfd, int fd)
 
 int acceptConnFd(int listenfd)
 {
-    int peerfd = ::accept(listenfd, NULL, NULL);
+	//std::cout <<"accept"<<std::endl;
+
+    int peerfd = accept(listenfd, NULL, NULL);
     if(peerfd == -1)
     {
         perror("accept conn fd");
@@ -88,10 +92,10 @@ namespace wd
 {
 EpollPoller::EpollPoller(int listenfd ,ThreadPool &threadpool)
 : epollfd_(createEpollFd()),
-  threadpool_(threadpool),
   listenfd_(listenfd),
   isLooping_(false),
-  events_(1024)
+  events_(1024),
+  threadpool_(threadpool)
 {
     addEpollReadFd(epollfd_, listenfd);
 }
@@ -104,15 +108,18 @@ EpollPoller::~EpollPoller()
 
 void EpollPoller::waitEpollFd()
 {
+	//std::cout<<"accept"<<std::endl;
     int nready;
     do
     {
+		//std::cout << "nready" <<nready <<std::endl;
         nready = ::epoll_wait(epollfd_, 
                               &*events_.begin(), 
                               static_cast<int>(events_.size()), 
                               5000);
     }while(nready == -1 && errno == EINTR);
-    
+	//std::cout << "nready" <<nready <<std::endl;
+
     if(nready == -1)
     {
         perror("epoll wait error");
@@ -124,6 +131,7 @@ void EpollPoller::waitEpollFd()
     }
     else
     {
+		//std::cout<<"accept"<<std::endl;
         //当vector满时，扩充内存
         if(nready == static_cast<int>(events_.size()))
         {
@@ -135,11 +143,13 @@ void EpollPoller::waitEpollFd()
         {
             if(events_[ix].data.fd == listenfd_)
             {
+				std::cout<<"listenfd_"<<std::endl;
                 if(events_[ix].events & EPOLLIN)
                     handleConnection();
             }
             else
             {
+				std::cout<< "recv" <<std::endl;
                 if(events_[ix].events & EPOLLIN)
                     handleMessage(events_[ix].data.fd);
             }
@@ -150,6 +160,7 @@ void EpollPoller::waitEpollFd()
 
 void EpollPoller::handleConnection()
 {
+	//std::cout<<"accept"<<std::endl;
     int peerfd = acceptConnFd(listenfd_);
     addEpollReadFd(epollfd_, peerfd);
 }
@@ -157,18 +168,31 @@ void EpollPoller::handleConnection()
 void EpollPoller::handleMessage(int peerfd)
 {
 	char buf[512];
+	memset(buf,0,512);
 	recv(peerfd,buf,sizeof(buf),0);
+	//std::cout << buf <<std::endl;
 	std::string expr(buf);
 	Task task(expr,peerfd,threadpool_.mydic_);
 	threadpool_.addTask(task);
+	//std::cout << threadpool_.get_queue_size()<<std::endl;
+
 }
 
 void EpollPoller::loop()
 {
     isLooping_ = true;
-
+	//std::cout << "EpollPoller loop" << std::endl;
     while(isLooping_)
     {
+#if 0
+		struct sockaddr_in addr;
+		socklen_t len = sizeof addr;
+		getsockname(listenfd_,(sockaddr *)&addr,&len);
+		int port  = ntohs(addr.sin_port);
+		std::cout << inet_ntoa(addr.sin_addr) << std::endl;
+		std::cout << port <<std::endl;
+		std::cout << listenfd_ <<std::endl;
+#endif
         waitEpollFd();
     }
 

@@ -9,7 +9,7 @@
 #include "EpollPoller.h"
 #include "ThreadPool.h"
 #include "Socket.h"
-#include "NonCopyable"
+#include "NonCopyable.h"
 #include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -19,7 +19,7 @@ namespace wd
 class TcpServer : NonCopyable
 {
 public:
-	TcpServer(const Myconf &conf);
+	TcpServer(const MyConf &conf);
 	void start();
 private:
 	Socket sockfd_;

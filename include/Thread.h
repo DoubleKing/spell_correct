@@ -6,12 +6,13 @@
  ************************************************************************/
 #pragma once
 
-#include "Noncopyable.h"
+#include <functional>
+#include "NonCopyable.h"
 #include <pthread.h>
 
 namespace wd
 {
-class Thread : private Noncopyable //public继承：接口继承；private继承：实现继承
+class Thread : private NonCopyable //public继承：接口继承；private继承：实现继承
 {//实现了它的对象语义
 public:
 	typedef std::function<void(/*Cache &*/)> ThreadCallback;
@@ -29,7 +30,7 @@ private:
 
 	pthread_t threadId_;
 	bool isRunning_;
-	ThreadCallback callback;
+	ThreadCallback callback_;
 //	Cache cache_;
 };
 

@@ -1,12 +1,12 @@
 #ifndef SOCKET_H_
 #define SOCKET_H_
 
-#include "Noncopyable.h"
+#include "NonCopyable.h"
 #include "InetAddress.h"
 
 namespace wd
 {
-class Socket : Noncopyable
+class Socket : NonCopyable
 {
 public:
     explicit Socket(int sockfd);

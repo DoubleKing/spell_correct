@@ -9,14 +9,15 @@
 #include "ThreadPool.h"
 #include "NonCopyable.h"
 #include <sys/epoll.h>
-
+#include <sys/types.h>
+#include <sys/socket.h>
 namespace wd
 {
 class ThreadPool;
 class EpollPoller : NonCopyable
 {
 public:
-	EpollPoller(int listenfd);
+	EpollPoller(int listenfd, ThreadPool &threadpool);
 	~EpollPoller();
 	void loop();//启动epoll
 	void unloop();//关闭epoll

@@ -17,15 +17,15 @@ void do_service(int sockfd);
 
 int main(int argc, const char *argv[])
 {
-    int peerfd = socket(PF_INET, SOCK_STREAM, 0);
+    int peerfd = socket(AF_INET, SOCK_STREAM, 0);
     if(peerfd == -1)
         ERR_EXIT("socket");
 
     struct sockaddr_in addr;
     memset(&addr, 0, sizeof addr);
     addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = inet_addr("192.168.175.128"); //localhost
-    addr.sin_port = htons(8111);
+    addr.sin_addr.s_addr = inet_addr("192.168.191.130"); //localhost
+    addr.sin_port = htons(8888);
     socklen_t len = sizeof addr;
     if(connect(peerfd, (struct sockaddr*)&addr, len) == -1)
         ERR_EXIT("Connect");
@@ -44,9 +44,13 @@ void do_service(int sockfd)
     char sendbuf[1024] = {0};
     while(1)
     {
-        fgets(sendbuf, sizeof sendbuf, stdin);
-        write(sockfd, sendbuf, strlen(sendbuf));
 
+        printf("input a word : ");
+		//fgets(sendbuf,sizeof sendbuf,stdin);
+		//sendbuf[strlen(sendbuf)-1]='\0';
+		scanf("%s",sendbuf);
+       // write(sockfd, sendbuf, strlen(sendbuf));
+		send(sockfd,sendbuf,strlen(sendbuf),0);
         //read
         int nread = read(sockfd, recvbuf, sizeof recvbuf);
         if(nread == -1)
@@ -62,7 +66,7 @@ void do_service(int sockfd)
             exit(EXIT_SUCCESS);
         }
 
-        printf("receive msg : %s", recvbuf);
+        printf("query result : %s\n", recvbuf);
 
         memset(recvbuf, 0, sizeof recvbuf);
         memset(sendbuf, 0, sizeof sendbuf);

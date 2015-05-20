@@ -4,6 +4,7 @@
 	> Mail:971774262@qq.com 
 	> Created Time: Thu 14 May 2015 07:44:05 AM PDT
  ************************************************************************/
+#include <string.h>
 #include "Task.h"
 namespace wd
 {
@@ -70,27 +71,34 @@ Task::Task(const std::string &expr ,int sockfd ,MyDic &mydic)
 
 void Task:: execute()
 {
+	std::cout << "Task::excute()"<<std::endl;
 	query_idx_table();
-	responce();
+	std::cout << "Task::quer_inx_table()  ended"<<std::endl;
+	
+	response();
 }
-void Task::responce()
+void Task::response()
 {
 	if(!que_res_.empty())
 	{
+		//std::cout << "Task::response" <<std::endl;
 		MyResult tmp = que_res_.top();
-		send(sockfd_,tmp.word_c_str(),tmp.size(),0);
+		send(sockfd_,tmp.word_.c_str(),tmp.word_.size(),0);
 	}
 	else
 	{
+		//std::cout << "Task::response" <<std::endl;
 		char buf[]="not found!!";
 		send(sockfd_,buf,sizeof(buf),0);
 	}
 }
 
-int Task::distance(const std::string &rhs)
-{
 
-	std::size_t lhsLen = length(expr_);
+int Task::distance( const std::string &rhs)
+{
+//	std::cout <<"Task::distance()"<<std::endl;
+	std::string lhs(expr_);
+	std::size_t lhsLen = length(lhs);
 	std::size_t rhsLen = length(rhs);
 	
 	int editDisArray[lhsLen + 1][rhsLen + 1];
@@ -109,8 +117,8 @@ int Task::distance(const std::string &rhs)
 
 	for(std::size_t iIdx = 1, lhsIdx = 0; iIdx <= lhsLen; ++iIdx)
 	{
-		size_t nBytes = nBytesCode(expr_[lhsIdx]);
-		sublhs = expr_.substr(lhsIdx, nBytes);
+		size_t nBytes = nBytesCode(lhs[lhsIdx]);
+		sublhs = lhs.substr(lhsIdx, nBytes);
 		lhsIdx += nBytes;
 
 		for(std::size_t jIdx = 1, rhsIdx = 0; jIdx <= rhsLen; ++jIdx)
@@ -138,18 +146,26 @@ int Task::distance(const std::string &rhs)
 
 void Task::query_idx_table()
 {
-	std::size_t exprlen = length(expr_);
+	std::cout <<expr_<<"'"<<std::endl;
+	std::size_t exprlen = expr_.size();
+	
+		std::cout <<"exprlen:"<<exprlen<<std::endl;
 	std::string subexpr;
-	for(std::size_t exprIdx = 0; exprIdx <= exprlen ;)
+	for(std::size_t exprIdx = 0; exprIdx < exprlen ;)
 	{
-		size_t nBytes = nBytesCode(expr_(exprIdx));
+		size_t nBytes = nBytesCode(expr_[exprIdx]);
+		std::cout <<"exprIdx:"<<exprIdx<<"  nBytes:"<<nBytes<<std::endl;
 		subexpr = expr_.substr(exprIdx,nBytes);
+		std::cout << "substr "<<subexpr <<std::endl;
 		exprIdx += nBytes;
-		statistic(mydic_.index_.find(substr)->second);
+		satistic(mydic_.index_.find(subexpr)->second);
+		std::cout <<"Task::satistic() ended"<<std::endl;
 	}
 }
-void statistic(std::set<int> &iset)
+void Task::satistic(std::set<int> &iset)
 {
+	
+		std::cout <<"Task::satistic()"<<std::endl;
 	for(int idx : iset)
 	{
 		int dis = distance(mydic_.dic_[idx].first);
@@ -158,7 +174,8 @@ void statistic(std::set<int> &iset)
 			MyResult myres;
 			myres.word_ = mydic_.dic_[idx].first;
 			myres.dist_ = dis;
-			myres.frequence_ = mydic_.dic_[inx].second;
+			myres.frequence_ = mydic_.dic_[idx].second;
+			myres.show();
 			que_res_.push(myres);
 		}
 	}

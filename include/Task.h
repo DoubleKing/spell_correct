@@ -6,6 +6,9 @@
  ************************************************************************/
 #pragma once
 
+#include "MyDic.h"
+#include <sys/types.h>
+#include <sys/socket.h>
 #include <queue>
 #include <set>
 #include <string>
@@ -19,6 +22,10 @@ struct MyResult
 	std::string word_;
 	int dist_;
 	int frequence_;
+	void show()
+	{
+	std::cout<<word_<<" "<< dist_ <<" "<<frequence_ <<std::endl;
+	}
 };
 class MyCompare
 {
@@ -26,13 +33,13 @@ public:
 	bool operator()(const MyResult &left ,const MyResult& right)
 	{
 		if(left.dist_ > right.dist_)
-			return true
+			return true;
 		else if (left.dist_ == right.dist_ && 
-				left.frequence_ > right.frequence_)
+				left.frequence_ < right.frequence_)
 			return true;
 		else if (left.dist_ == right.dist_ && 
 				left.frequence_ ==  right.frequence_ &&
-				left.word_ > right.word_)
+				left.word_ < right.word_)
 			return true;
 		else
 			return false;
@@ -44,16 +51,16 @@ public:
 	Task(const std::string &expr ,int sockfd , MyDic &mydic);
 	Task(const char*expr, int sockfd , MyDic &mydic);
 
-	void excute(/*MyCache& cache*/);
+	void execute(/*MyCache& cache*/);
 private:
 	void query_idx_table();
-	void satistic(set<int>& iset);
+	void satistic(std::set<int>& iset);
 	int distance(const std::string& right);
 	void response(/*Cache &cache*/);
 private:
 	std::string expr_;
 	int sockfd_;
 	MyDic &mydic_;
-	std::priority_queue<MyResult, vector<MyResult> ,MyCompare> que_res_;
+	std::priority_queue<MyResult, std::vector<MyResult> ,MyCompare> que_res_;
 };
 }

@@ -12,11 +12,11 @@
 int main()
 {
 	wd::MyConf conf("./conf/conf.txt");
-	//conf.conf_show();
+	conf.conf_show();
 	//wd::MyDic dic(conf);
 	//dic.show_dic();
 	//dic.show_index();
-	TcpServer server(conf);
+	wd::TcpServer server(conf);
 	server.start();
 
 	return 0;

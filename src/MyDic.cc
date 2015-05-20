@@ -27,7 +27,7 @@ MyDic::MyDic(const MyConf& conf)
 	}
 	//根据vector_建立索引
 	int i = 0;
-	while (i < dic_.size())
+	while (i <(int) dic_.size())
 	{
 		iToIndex(i,index_);
 		i++;

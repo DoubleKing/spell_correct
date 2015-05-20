@@ -5,21 +5,21 @@
 	> Created Time: Thu 14 May 2015 05:44:25 AM PDT
  ************************************************************************/
 #pragma once
-
+#include "Task.h"
 #include "MyDic.h"
-#include "Noncopyable.h"
+#include "NonCopyable.h"
+#include "Thread.h"
 #include "MutexLock.h"
 #include "Condition.h"
 #include "MyConf.h"
 #include <vector>
 #include <queue>
-
+#include <functional>
 namespace wd
 {
-class Thread;
 class MyDic;
 
-class ThreadPool : private Noncopyable
+class ThreadPool : private NonCopyable
 {
 public:
 	ThreadPool( std::size_t threadsNum /*,Cache &cache */,MyDic &mydic);
@@ -30,6 +30,10 @@ public:
 	Task  getTask();
 
 	void runInThread(/*Cache &cache*/);
+	int get_queue_size()
+	{
+		return queue_.size();
+	}
 
 //	void update();
 private:
@@ -45,7 +49,7 @@ private:
 //	Cache cache_;
 
 public:
-	MyDic &mydict_;
+	MyDic &mydic_;
 	
 };
 
