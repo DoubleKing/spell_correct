@@ -158,6 +158,8 @@ void Task::query_idx_table()
 		subexpr = expr_.substr(exprIdx,nBytes);
 		std::cout << "substr "<<subexpr <<std::endl;
 		exprIdx += nBytes;
+		if(mydic_.index_.find(subexpr) == mydic_.index_.end())
+			continue;
 		satistic(mydic_.index_.find(subexpr)->second);
 		std::cout <<"Task::satistic() ended"<<std::endl;
 	}
