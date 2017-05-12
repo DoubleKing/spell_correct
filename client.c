@@ -24,8 +24,8 @@ int main(int argc, const char *argv[])
     struct sockaddr_in addr;
     memset(&addr, 0, sizeof addr);
     addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = inet_addr("23.106.138.107"); //localhost
-    addr.sin_port = htons(8888);
+    addr.sin_addr.s_addr = inet_addr("23.105.203.121"); //localhost
+    addr.sin_port = htons(8887);
     socklen_t len = sizeof addr;
     if(connect(peerfd, (struct sockaddr*)&addr, len) == -1)
         ERR_EXIT("Connect");

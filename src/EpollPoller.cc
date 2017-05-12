@@ -149,11 +149,18 @@ void EpollPoller::waitEpollFd()
             }
             else
             {
-				std::cout<< "recv" <<std::endl;
                 if(events_[ix].events & EPOLLIN)
-                    handleMessage(events_[ix].data.fd);
+				{
+					std::cout<< "recv" <<std::endl;
+                    if(!handleMessage(events_[ix].data.fd))
+					{
+						delEpollReadFd(epollfd_,events_[ix].data.fd);
+						close(events_[ix].data.fd);
+					}
+				}
             }
         }
+		//events_.empty();
     }
 
 }
@@ -165,16 +172,22 @@ void EpollPoller::handleConnection()
     addEpollReadFd(epollfd_, peerfd);
 }
 
-void EpollPoller::handleMessage(int peerfd)
+bool EpollPoller::handleMessage(int peerfd)
 {
 	char buf[512];
 	memset(buf,0,512);
-	recv(peerfd,buf,sizeof(buf),0);
-	//std::cout << buf <<std::endl;
-	std::string expr(buf);
-	Task task(expr,peerfd,threadpool_.mydic_);
-	threadpool_.addTask(task);
-	//std::cout << threadpool_.get_queue_size()<<std::endl;
+	if(recv(peerfd,buf,sizeof(buf),0) > 0)
+	{
+		std::string expr(buf);
+		Task task(expr,peerfd,threadpool_.mydic_);
+		threadpool_.addTask(task);
+		//std::cout << threadpool_.get_queue_size()<<std::endl;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 
 }
 

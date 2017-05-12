@@ -1,3 +1,3 @@
-myip	23.106.138.107
-myport	8888
+myip	23.105.203.121
+myport	8887
 mydic	./data/mydic.dat

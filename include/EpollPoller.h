@@ -25,7 +25,7 @@ private:
 
 	void waitEpollFd();
 	void handleConnection();//处理accept
-	void handleMessage(int peerfd);//处理msg
+	bool handleMessage(int peerfd);//处理msg
 
 	const int epollfd_;
 	const int listenfd_;
