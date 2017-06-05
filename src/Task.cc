@@ -81,13 +81,11 @@ void Task::response()
 {
 	if(!que_res_.empty())
 	{
-		//std::cout << "Task::response" <<std::endl;
 		MyResult tmp = que_res_.top();
 		send(sockfd_,tmp.word_.c_str(),tmp.word_.size(),0);
 	}
 	else
 	{
-		//std::cout << "Task::response" <<std::endl;
 		char buf[]="not found!!";
 		send(sockfd_,buf,sizeof(buf),0);
 	}
@@ -96,7 +94,6 @@ void Task::response()
 
 int Task::distance( const std::string &rhs)
 {
-//	std::cout <<"Task::distance()"<<std::endl;
 	std::string lhs(expr_);
 	std::size_t lhsLen = length(lhs);
 	std::size_t rhsLen = length(rhs);
