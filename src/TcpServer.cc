@@ -31,7 +31,7 @@ TcpServer::TcpServer(const MyConf& conf)
 	InetAddress addr(ip,port);
 
 	sockfd_.setTcpNoDelay(false);
-	sockfd_.setReusePort(true);
+	sockfd_.setReusePort(false);
 	sockfd_.setReuseAddr(true);
 	sockfd_.setKeepAlive(false);
 
