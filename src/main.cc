@@ -10,6 +10,8 @@
 #include <iostream>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/file.h>
+#include <sys/ipc.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
@@ -29,9 +31,22 @@ void daemonize(void) {
         if (fd > STDERR_FILENO) close(fd);
     }
 }
-
+void repeatCheck()
+{
+	int fd = open(".lock",O_WRONLY|O_CREAT);
+	if(fd < 0)
+	{
+		exit(-1);
+	}
+	if(0 > flock(fd, LOCK_EX|LOCK_NB))
+	{
+		std::cout << "is already running" << std::endl;
+		exit(-1);
+	}
+}
 int main(int argc, char *argv[])
 {
+	repeatCheck();
 	if(argc > 1 && strcmp(argv[1],"daemon") == 0)
 		daemonize();
 	wd::MyConf conf("./conf/conf.txt");
