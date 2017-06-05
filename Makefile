@@ -1,4 +1,3 @@
-
 INC_DIR:= ./include/
 SRC_DIR:= ./src/
 SRCS:=$(wildcard ./src/*.cc)
