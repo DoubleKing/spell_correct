@@ -15,6 +15,10 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
+
+#define MAXBUFSIZE 1024
+char g_szWorkPath[MAXBUFSIZE];
+
 void daemonize(void) {
     int fd;
 
@@ -44,12 +48,32 @@ void repeatCheck()
 		exit(-1);
 	}
 }
+void getWorkPath()
+{
+	int count = readlink("/proc/self/exe", g_szWorkPath, MAXBUFSIZE);
+	if(count < 0 || count >= MAXBUFSIZE)
+	{
+		printf("get path fail\n");
+		exit(-1);
+	}
+	//std::cout << path << std::endl;
+	char * tmp = strstr(g_szWorkPath,"bin/main");
+	if(tmp == NULL)
+	{
+		printf("get path fail\n");
+		exit(-1);
+	}
+	*tmp = '\0';
+}
 int main(int argc, char *argv[])
 {
 	repeatCheck();
 	if(argc > 1 && strcmp(argv[1],"daemon") == 0)
 		daemonize();
-	wd::MyConf conf("./conf/conf.txt");
+	getWorkPath();
+	std::string tmp = std::string(g_szWorkPath) + std::string("/conf/conf.txt"); 
+	std::cout << tmp << std::endl;
+	wd::MyConf conf(tmp);
 	conf.conf_show();
 	//wd::MyDic dic(conf);
 	//dic.show_dic();

@@ -5,11 +5,12 @@
 	> Created Time: Thu 14 May 2015 07:53:46 PM PDT
  ************************************************************************/
 #include "MyDic.h"
+extern char g_szWorkPath[];
 namespace wd
 {
 MyDic::MyDic(const MyConf& conf)
 {
-	std::string dicPath = conf.conf_.find("mydic")->second;
+	std::string dicPath = g_szWorkPath + conf.conf_.find("mydic")->second;
 
 	//std::cout<<dicPath<<std::endl;
 	//读字典文件并放到vec_里
