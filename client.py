@@ -8,6 +8,7 @@ s = socket.socket(socket.AF_INET,)        # 创建 socket 对象
 s.connect(('23.105.203.121', 8887))
 while 1:
     word = raw_input('please enter query world: ')
-    s.send(word)
+    if s.send(word) <= 0:
+        continue
     print s.recv(1024)
 s.close()

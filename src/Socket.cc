@@ -36,6 +36,7 @@ void Socket::bindAddress(const InetAddress &addr)
 void Socket::listen()
 {
     if(::listen(sockfd_, SOMAXCONN) == -1)
+    //if(::listen(sockfd_, 0) == -1)
     {
         fprintf(stderr, "listen address error\n");
         exit(EXIT_FAILURE);
