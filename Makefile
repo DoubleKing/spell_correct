@@ -3,7 +3,7 @@ SRC_DIR:= ./src/
 SRCS:=$(wildcard ./src/*.cc)
 LIBS:= -lpthread
 CXX:= g++
-CXXFLAGS:=-Wall -g -std=c++11 $(addprefix -I, $(INC_DIR)) $(LIBS)
+CXXFLAGS:=-Wall -g -std=c++11 $(addprefix -I, $(INC_DIR)) $(LIBS) -Wno-unused-function
 
 EXE:=./bin/main
 
