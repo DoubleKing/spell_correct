@@ -24,6 +24,7 @@ class ThreadPool : private NonCopyable
 public:
 	ThreadPool( std::size_t threadsNum /*,Cache &cache */,MyDic &mydic);
 	//析构函数，释放资源 TODO
+	~ThreadPool();
 	void start();
 
 	void addTask(Task task);

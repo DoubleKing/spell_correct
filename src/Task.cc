@@ -46,10 +46,11 @@ std::size_t length(const std::string &str)
 {//获取字符串的长度
 	std::size_t ilen = 0;
 	std::size_t sz = str.size();
-	for(std::size_t idx = 0; idx != sz; ++idx)
+	std::size_t idx = 0;
+	while(idx < sz)
 	{
 		int nBytes = nBytesCode(str[idx]);
-		idx += (nBytes - 1);
+		idx += nBytes;
 		++ilen;
 	}
 	return ilen;
@@ -71,9 +72,7 @@ Task::Task(const std::string &expr ,int sockfd ,MyDic &mydic)
 
 void Task:: execute()
 {
-	std::cout << "Task::excute()"<<std::endl;
 	query_idx_table();
-	std::cout << "Task::quer_inx_table()  ended"<<std::endl;
 	
 	response();
 }
@@ -143,28 +142,21 @@ int Task::distance( const std::string &rhs)
 
 void Task::query_idx_table()
 {
-	std::cout <<expr_<<"'"<<std::endl;
 	std::size_t exprlen = expr_.size();
 	
-		std::cout <<"exprlen:"<<exprlen<<std::endl;
 	std::string subexpr;
 	for(std::size_t exprIdx = 0; exprIdx < exprlen ;)
 	{
 		size_t nBytes = nBytesCode(expr_[exprIdx]);
-		std::cout <<"exprIdx:"<<exprIdx<<"  nBytes:"<<nBytes<<std::endl;
 		subexpr = expr_.substr(exprIdx,nBytes);
-		std::cout << "substr "<<subexpr <<std::endl;
 		exprIdx += nBytes;
 		if(mydic_.index_.find(subexpr) == mydic_.index_.end())
 			continue;
 		satistic(mydic_.index_.find(subexpr)->second);
-		std::cout <<"Task::satistic() ended"<<std::endl;
 	}
 }
 void Task::satistic(std::set<int> &iset)
 {
-	
-		std::cout <<"Task::satistic()"<<std::endl;
 	for(int idx : iset)
 	{
 		int dis = distance(mydic_.dic_[idx].first);
@@ -174,7 +166,7 @@ void Task::satistic(std::set<int> &iset)
 			myres.word_ = mydic_.dic_[idx].first;
 			myres.dist_ = dis;
 			myres.frequence_ = mydic_.dic_[idx].second;
-			myres.show();
+			//myres.show();
 			que_res_.push(myres);
 		}
 	}

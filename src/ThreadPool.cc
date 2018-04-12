@@ -18,6 +18,14 @@ ThreadPool::ThreadPool(
 	}
 }
 
+ThreadPool::~ThreadPool()
+{
+	for(;threads_.size() > 0; threads_.pop_back())
+	{
+		delete threads_.back();
+	}
+}
+
 void ThreadPool::start()
 {
 	std::vector<Thread *>::iterator it = threads_.begin();

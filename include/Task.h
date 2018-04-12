@@ -24,7 +24,7 @@ struct MyResult
 	int frequence_;
 	void show()
 	{
-	std::cout<<word_<<" "<< dist_ <<" "<<frequence_ <<std::endl;
+		std::cout<<word_<<" "<< dist_ <<" "<<frequence_ <<std::endl;
 	}
 };
 class MyCompare
