@@ -1,4 +1,4 @@
-/*************************************************************************
+﻿/*************************************************************************
 	> File Name: ThreadPool.h
 	> Author: DoubleKing
 	> Mail:971774262@qq.com 
@@ -11,7 +11,6 @@
 #include "Thread.h"
 #include "MutexLock.h"
 #include "Condition.h"
-#include "MyConf.h"
 #include <vector>
 #include <queue>
 #include <functional>
@@ -23,7 +22,7 @@ class ThreadPool : private NonCopyable
 {
 public:
 	ThreadPool( std::size_t threadsNum /*,Cache &cache */,MyDic &mydic);
-	//析构函数，释放资源 TODO
+	//析构函数，释放资�?TODO
 	~ThreadPool();
 	void start();
 

@@ -51,6 +51,8 @@ public:
 	Task(const std::string &expr ,int sockfd , MyDic &mydic);
 	Task(const char*expr, int sockfd , MyDic &mydic);
 
+	std::string GetExpr(){return expr_;};
+
 	void execute(/*MyCache& cache*/);
 private:
 	void query_idx_table();

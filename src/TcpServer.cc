@@ -17,17 +17,15 @@ int createSocketFd()
 	}
 	return fd;
 }
-TcpServer::TcpServer(const MyConf& conf)
+TcpServer::TcpServer(const SettingData& setting_data)
 	:sockfd_(createSocketFd()),
-	 mydic_(conf),
+	 mydic_(setting_data.m_strDataPath),
 	 threadPool_(5,mydic_),
 	 poller_(sockfd_.fd(),threadPool_)
 {
-	std::string ip = conf.conf_.find("myip")->second;
-	std::string port0 = conf.conf_.find("myport")->second;
-	int port1 = std::stoi(port0);
-	uint16_t port =(uint16_t)port1;
-	//std::cout << port<< std::endl;
+	std::string ip = setting_data.m_SocketSetting.m_strIP;
+	uint16_t port  =(uint16_t)setting_data.m_SocketSetting.m_intPort;
+
 	InetAddress addr(ip,port);
 
 	sockfd_.setTcpNoDelay(false);

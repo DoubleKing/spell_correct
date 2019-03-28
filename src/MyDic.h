@@ -5,16 +5,19 @@
 	> Created Time: Thu 14 May 2015 07:42:48 PM PDT
  ************************************************************************/
 #pragma once
-#include "MyConf.h"
+
+#include <iostream>
+#include <fstream>
+#include <sstream>
 #include <set>
 #include <map>
-#include <iostream>
 #include <vector>
+
 namespace wd
 {
 struct MyDic
 {
-	MyDic(const wd::MyConf& conf);
+	MyDic(const std::string& strFilePath);
 	void iToIndex(int &i , std::map<std::string, std::set<int> > &map);
 	void show_dic();
 	void show_index();

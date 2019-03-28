@@ -8,15 +8,12 @@
 extern char g_szWorkPath[];
 namespace wd
 {
-MyDic::MyDic(const MyConf& conf)
+MyDic::MyDic(const std::string& strFilePath)
 {
-	std::string dicPath = g_szWorkPath + conf.conf_.find("mydic")->second;
-
-	//std::cout<<dicPath<<std::endl;
 	//读字典文件并放到vec_里
 	std::string tmp;
 	std::ifstream fin;
-	fin.open(dicPath);
+	fin.open(strFilePath);
 	while(std::getline(fin,tmp))
 	{
 		std::istringstream line(tmp);

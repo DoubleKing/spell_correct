@@ -10,16 +10,19 @@
 #include "ThreadPool.h"
 #include "Socket.h"
 #include "NonCopyable.h"
+#include "Settings.h"
 #include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
+
+//using namespace inifile;
 
 namespace wd
 {
 class TcpServer : NonCopyable
 {
 public:
-	TcpServer(const MyConf &conf);
+	TcpServer(const SettingData &setting_data);
 	void start();
 private:
 	Socket sockfd_;

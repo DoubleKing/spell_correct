@@ -14,10 +14,20 @@
 
 namespace wd
 {
-struct MyConf
+struct SocketSetting
 {
-	std::map<std::string, std::string> conf_;
-	MyConf(const std::string& conf_path);
-	void conf_show();
+	std::string	m_strIP;
+	int			m_intPort;
+};
+class SettingData
+{
+public:
+	SocketSetting	m_SocketSetting;
+	std::string		m_strDataPath;
+	std::string		m_strLogPath;
+	int				m_intLogLevel;	
+public:
+	SettingData(std::string strFilePat);
+	//void LoadSetting(std::string strFilePath);
 };
 }

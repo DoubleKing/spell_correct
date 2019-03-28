@@ -5,8 +5,8 @@
 	> Created Time: Thu 14 May 2015 07:18:34 PM PDT
  ************************************************************************/
 #include "TcpServer.h"
-#include "MyConf.h"
 #include "MyDic.h"
+#include "log.h"
 #include <iostream>
 #include <unistd.h>
 #include <sys/types.h>
@@ -16,8 +16,12 @@
 #include <fcntl.h>
 #include <string.h>
 
+
+
 #define MAXBUFSIZE 1024
 char g_szWorkPath[MAXBUFSIZE];
+wd::Logger g_log;
+
 
 void daemonize(void) {
     int fd;
@@ -53,11 +57,11 @@ void getWorkPath()
 		printf("get path fail\n");
 		exit(-1);
 	}
-	//std::cout << path << std::endl;
-	char * tmp = strstr(g_szWorkPath,"bin/main");
+	std::cout << g_szWorkPath << std::endl;
+	char * tmp = strstr(g_szWorkPath,"bin/spell_correct");
 	if(tmp == NULL)
 	{
-		printf("get path fail\n");
+		printf("get work path fail\n");
 		exit(-1);
 	}
 	*tmp = '\0';
@@ -68,14 +72,13 @@ int main(int argc, char *argv[])
 	if(argc > 1 && strcmp(argv[1],"daemon") == 0)
 		daemonize();
 	getWorkPath();
-	std::string tmp = std::string(g_szWorkPath) + std::string("/conf/conf.txt"); 
-	std::cout << tmp << std::endl;
-	wd::MyConf conf(tmp);
-	conf.conf_show();
-	//wd::MyDic dic(conf);
-	//dic.show_dic();
-	//dic.show_index();
-	wd::TcpServer server(conf);
+	
+	std::string strSettingPath = std::string(g_szWorkPath) + std::string("/conf/spell_correct.ini"); 
+	std::cout << strSettingPath << std::endl;
+	wd::SettingData setting_data(strSettingPath);
+	g_log.init(setting_data.m_intLogLevel,setting_data.m_strLogPath);
+	g_log.addLog(5, "main", "test:%d", 4);
+	wd::TcpServer server(setting_data);
 	server.start();
 
 	return 0;

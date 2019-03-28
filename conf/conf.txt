@@ -1,3 +1,0 @@
-myip	127.0.0.1
-myport	8887
-mydic	./data/mydic.dat

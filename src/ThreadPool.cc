@@ -1,5 +1,8 @@
 
 #include "ThreadPool.h"
+#include "log.h"
+
+extern wd::Logger g_log;
 namespace wd
 {
 ThreadPool::ThreadPool(
@@ -55,10 +58,10 @@ Task ThreadPool::getTask()
 
 void ThreadPool::runInThread()
 {
-	std::cout <<"Thread  Run "<<std::endl;
+	g_log.addLog(5, "runInThread", "Thread  Run");
 	while(1){
 		Task task = getTask();
-		std::cout <<"get task"<<std::endl;
+		g_log.addLog(5, "runInThread", "GetTask:%s",task.GetExpr().c_str());
 		task.execute();
 	}
 }

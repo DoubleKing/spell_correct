@@ -34,6 +34,10 @@ std::size_t nBytesCode(const char ch)
 		{//6字节编码
 			nBytes += 6;
 		}
+		else
+		{
+			nBytes += 1;
+		}
 	}
 	else{//1字节编码或英文
 		nBytes += 1;
