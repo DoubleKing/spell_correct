@@ -27,7 +27,7 @@ public:
 	void start();
 
 	void addTask(Task task);
-	Task * getTask();
+	Task getTask();
 
 	void runInThread(/*Cache &cache*/);
 	int get_queue_size()
