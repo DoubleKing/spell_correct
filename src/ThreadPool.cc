@@ -46,23 +46,35 @@ void ThreadPool::addTask(Task task)
 	cond_.notify();
 }
 
-Task ThreadPool::getTask()
+Task* ThreadPool::getTask()
 {
 	MutexLockGuard mutexGuard(mutex_);
 	while(queue_.empty())
 		cond_.wait();
-	Task tmp = queue_.front();
-	queue_.pop();
-	return tmp ;
+	//防止虚假唤醒
+	if(!queue_.empty())
+	{
+		Task * tmp = new Task(queue_.front());
+		queue_.pop();
+		return tmp;
+	}
+	else
+	{
+		return NULL;
+	}
 }
 
 void ThreadPool::runInThread()
 {
 	g_log.addLog(5, "runInThread", "Thread  Run");
 	while(1){
-		Task task = getTask();
-		g_log.addLog(5, "runInThread", "GetTask:%s",task.GetExpr().c_str());
-		task.execute();
+		Task* task = getTask();
+		if(task)
+		{
+			g_log.addLog(5, "runInThread", "GetTask:%s",task->GetExpr().c_str());
+			task->execute();
+		}
+
 	}
 }
 }//end namespace wd
