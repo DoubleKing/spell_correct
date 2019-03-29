@@ -8,6 +8,7 @@
 
 #include "ThreadPool.h"
 #include "NonCopyable.h"
+#include "log.h"
 #include <sys/epoll.h>
 #include <sys/types.h>
 #include <sys/socket.h>

@@ -8,7 +8,9 @@
 
 #include <pthread.h>
 #include <assert.h>
+#include "log.h"
 #include "NonCopyable.h"
+#include "common.h"
 namespace wd{
 
 class MutexLock : NonCopyable
@@ -17,7 +19,7 @@ public:
 	MutexLock();
 	~MutexLock();
 
-	void lock();
+	int lock();
 	void unlock();
 	bool isLocked();
 	pthread_mutex_t* getMutexPtr();
@@ -26,8 +28,7 @@ private:
 	bool isLocking_;
 };
 
-class MutexLockGuard//把MutexLock上锁解锁交给Guard来做
-					//防止中断异常
+class MutexLockGuard//把MutexLock上锁解锁交给Guard来做防止中断异常
 {
 public:
 	MutexLockGuard(MutexLock &mutex)

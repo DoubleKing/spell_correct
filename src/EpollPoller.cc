@@ -9,6 +9,8 @@
 #include <netinet/in.h>
 #include <assert.h>
 #include <arpa/inet.h>
+
+extern wd::Logger g_log;
 namespace
 {
 int createEpollFd()
@@ -49,8 +51,6 @@ void delEpollReadFd(int epollfd, int fd)
 
 int acceptConnFd(int listenfd)
 {
-	//std::cout <<"accept"<<std::endl;
-
     int peerfd = accept(listenfd, NULL, NULL);
     if(peerfd == -1)
     {
@@ -71,6 +71,41 @@ ssize_t recvPeek(int sockfd, void *buf, size_t len)
     while(nread == -1 && errno == EINTR);
 
     return nread;
+}
+int anetPeerToString(int fd, char *ip, size_t ip_len, int *port) {
+    struct sockaddr_storage sa;
+    socklen_t salen = sizeof(sa);
+
+    if (getpeername(fd,(struct sockaddr*)&sa,&salen) == -1) goto error;
+    if (ip_len == 0) goto error;
+
+    if (sa.ss_family == AF_INET) {
+        struct sockaddr_in *s = (struct sockaddr_in *)&sa;
+        if (ip) inet_ntop(AF_INET,(void*)&(s->sin_addr),ip,ip_len);
+        if (port) *port = ntohs(s->sin_port);
+    } else if (sa.ss_family == AF_INET6) {
+        struct sockaddr_in6 *s = (struct sockaddr_in6 *)&sa;
+        if (ip) inet_ntop(AF_INET6,(void*)&(s->sin6_addr),ip,ip_len);
+        if (port) *port = ntohs(s->sin6_port);
+    } else if (sa.ss_family == AF_UNIX) {
+        if (ip) strncpy(ip,"/unixsocket",ip_len);
+        if (port) *port = 0;
+    } else {
+        goto error;
+    }
+    return 0;
+
+error:
+    if (ip) {
+        if (ip_len >= 2) {
+            ip[0] = '?';
+            ip[1] = '\0';
+        } else if (ip_len == 1) {
+            ip[0] = '\0';
+        }
+    }
+    if (port) *port = 0;
+    return -1;
 }
 
 //通过预览数据 判断conn是否关闭
@@ -108,17 +143,14 @@ EpollPoller::~EpollPoller()
 
 void EpollPoller::waitEpollFd()
 {
-	//std::cout<<"accept"<<std::endl;
     int nready;
     do
     {
-		//std::cout << "nready" <<nready <<std::endl;
         nready = ::epoll_wait(epollfd_, 
                               &*events_.begin(), 
                               static_cast<int>(events_.size()), 
                               5000);
     }while(nready == -1 && errno == EINTR);
-	//std::cout << "nready" <<nready <<std::endl;
 
     if(nready == -1)
     {
@@ -127,11 +159,10 @@ void EpollPoller::waitEpollFd()
     }
     else if(nready == 0)
     {
-        printf("epoll timeout.\n");
+        g_log.addLog(3, "waitEpollFd", "epoll timeout");
     }
     else
     {
-		//std::cout<<"accept"<<std::endl;
         //当vector满时，扩充内存
         if(nready == static_cast<int>(events_.size()))
         {
@@ -143,7 +174,6 @@ void EpollPoller::waitEpollFd()
         {
             if(events_[ix].data.fd == listenfd_)
             {
-				std::cout<<"listenfd_"<<std::endl;
                 if(events_[ix].events & EPOLLIN)
                     handleConnection();
             }
@@ -151,7 +181,6 @@ void EpollPoller::waitEpollFd()
             {
                 if(events_[ix].events & EPOLLIN)
 				{
-					std::cout<< "recv" <<std::endl;
                     if(!handleMessage(events_[ix].data.fd))
 					{
 						delEpollReadFd(epollfd_,events_[ix].data.fd);
@@ -168,7 +197,11 @@ void EpollPoller::waitEpollFd()
 void EpollPoller::handleConnection()
 {
 	//std::cout<<"accept"<<std::endl;
+	char ip[32]={0};
+	int port;
     int peerfd = acceptConnFd(listenfd_);
+	anetPeerToString(peerfd, ip, sizeof(ip), &port);
+	g_log.addLog(5, "handleConnection", "new connection: %s/%d", ip, port);
     addEpollReadFd(epollfd_, peerfd);
 }
 
@@ -181,7 +214,6 @@ bool EpollPoller::handleMessage(int peerfd)
 		std::string expr(buf);
 		Task task(expr,peerfd,threadpool_.mydic_);
 		threadpool_.addTask(task);
-		//std::cout << threadpool_.get_queue_size()<<std::endl;
 		return true;
 	}
 	else
@@ -194,7 +226,6 @@ bool EpollPoller::handleMessage(int peerfd)
 void EpollPoller::loop()
 {
     isLooping_ = true;
-	//std::cout << "EpollPoller loop" << std::endl;
     while(isLooping_)
     {
 #if 0

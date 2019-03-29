@@ -68,7 +68,7 @@ void getWorkPath()
 }
 int main(int argc, char *argv[])
 {
-	repeatCheck();
+	//repeatCheck();
 	if(argc > 1 && strcmp(argv[1],"daemon") == 0)
 		daemonize();
 	getWorkPath();

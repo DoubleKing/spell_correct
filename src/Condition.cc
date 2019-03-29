@@ -21,7 +21,7 @@ Condition::~Condition()
 }
 void Condition::wait()
 {
-	assert(mutex_.isLocked());
+	//assert(mutex_.isLocked());
 	pthread_cond_wait(&cond_, mutex_.getMutexPtr());
 }
 void Condition::notify()
