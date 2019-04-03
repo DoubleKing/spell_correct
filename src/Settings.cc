@@ -9,7 +9,7 @@
 using namespace inifile;
 namespace wd
 {
-SettingData::SettingData(std::string strFilePath)
+int SettingData::LoadSetting(std::string strFilePath)
 {
 	IniFile inifile;
 	inifile.Load(strFilePath);

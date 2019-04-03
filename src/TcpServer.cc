@@ -5,6 +5,9 @@
 	> Created Time: Sun 17 May 2015 07:40:46 PM PDT
  ************************************************************************/
 #include "TcpServer.h"
+
+extern long g_ncpus;
+
 namespace wd
 {
 int createSocketFd()
@@ -19,9 +22,8 @@ int createSocketFd()
 }
 TcpServer::TcpServer(const SettingData& setting_data)
 	:sockfd_(createSocketFd()),
-	 mydic_(setting_data.m_strDataPath),
-	 threadPool_(5,mydic_),
-	 poller_(sockfd_.fd(),threadPool_)
+	m_pThreadPool_(new DynamicThreadPool(g_ncpus)),
+	poller_(sockfd_.fd(), m_pThreadPool_)
 {
 	std::string ip = setting_data.m_SocketSetting.m_strIP;
 	uint16_t port  =(uint16_t)setting_data.m_SocketSetting.m_intPort;
@@ -39,7 +41,7 @@ TcpServer::TcpServer(const SettingData& setting_data)
 
 void TcpServer::start()
 {
-	threadPool_.start();
+	//threadPool_.start();
 	poller_.loop();
 }
 }

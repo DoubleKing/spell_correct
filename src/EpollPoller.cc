@@ -1,4 +1,6 @@
 #include "EpollPoller.h"
+#include "Task.h"
+#include "Settings.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/socket.h>
@@ -11,6 +13,9 @@
 #include <arpa/inet.h>
 
 extern wd::Logger g_log;
+extern long g_ncpus;
+extern wd::SettingData g_SettingData;
+
 namespace
 {
 int createEpollFd()
@@ -125,11 +130,12 @@ bool isConnectionClosed(int sockfd)
 
 namespace wd
 {
-EpollPoller::EpollPoller(int listenfd ,ThreadPool &threadpool)
+EpollPoller::EpollPoller(int listenfd ,DynamicThreadPool *threadpool)
 : epollfd_(createEpollFd()),
   listenfd_(listenfd),
   isLooping_(false),
   events_(1024),
+  m_mydic(g_SettingData.m_strDataPath),
   threadpool_(threadpool)
 {
     addEpollReadFd(epollfd_, listenfd);
@@ -196,7 +202,6 @@ void EpollPoller::waitEpollFd()
 
 void EpollPoller::handleConnection()
 {
-	//std::cout<<"accept"<<std::endl;
 	char ip[32]={0};
 	int port;
     int peerfd = acceptConnFd(listenfd_);
@@ -212,8 +217,8 @@ bool EpollPoller::handleMessage(int peerfd)
 	if(recv(peerfd,buf,sizeof(buf),0) > 0)
 	{
 		std::string expr(buf);
-		Task task(expr,peerfd,threadpool_.mydic_);
-		threadpool_.addTask(task);
+		Task task(expr, peerfd, m_mydic);
+		threadpool_->Add([=]()mutable {task.execute();});
 		return true;
 	}
 	else

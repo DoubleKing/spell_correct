@@ -6,6 +6,7 @@
  ************************************************************************/
 #include <string.h>
 #include "Task.h"
+#include "../tools/cJSON/cJSON.h"
 namespace wd
 {
 
@@ -82,16 +83,18 @@ void Task:: execute()
 }
 void Task::response()
 {
-	if(!que_res_.empty())
+	cJSON * JsonArray = cJSON_CreateArray();
+	for(int i = 0; !que_res_.empty() && i < 10; i++)
 	{
 		MyResult tmp = que_res_.top();
-		send(sockfd_,tmp.word_.c_str(),tmp.word_.size(),0);
+		cJSON_AddItemToArray(JsonArray, cJSON_CreateString(tmp.word_.c_str()));
+		que_res_.pop();
 	}
-	else
-	{
-		char buf[]="not found!!";
-		send(sockfd_,buf,sizeof(buf),0);
-	}
+	char * ret = cJSON_Print(JsonArray);
+	send(sockfd_, ret, strlen(ret),0);
+	free(ret);
+	cJSON_Delete(JsonArray);
+	
 }
 
 
@@ -170,7 +173,6 @@ void Task::satistic(std::set<int> &iset)
 			myres.word_ = mydic_.dic_[idx].first;
 			myres.dist_ = dis;
 			myres.frequence_ = mydic_.dic_[idx].second;
-			//myres.show();
 			que_res_.push(myres);
 		}
 	}

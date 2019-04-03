@@ -6,9 +6,10 @@
  ************************************************************************/
 #pragma once
 
-#include "ThreadPool.h"
+#include "dynamic_thread_pool.h"
 #include "NonCopyable.h"
 #include "log.h"
+#include "MyDic.h"
 #include <sys/epoll.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -18,7 +19,7 @@ class ThreadPool;
 class EpollPoller : NonCopyable
 {
 public:
-	EpollPoller(int listenfd, ThreadPool &threadpool);
+	EpollPoller(int listenfd, DynamicThreadPool *threadpool);
 	~EpollPoller();
 	void loop();//启动epoll
 	void unloop();//关闭epoll
@@ -33,7 +34,8 @@ private:
 	bool isLooping_;
 	typedef std::vector<struct epoll_event> EventList;
 	EventList events_;//保存活跃的fd
+	MyDic m_mydic;
 	
-	ThreadPool & threadpool_;
+	DynamicThreadPool * threadpool_;
 };
 }

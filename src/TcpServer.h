@@ -7,10 +7,11 @@
 #pragma once
 
 #include "EpollPoller.h"
-#include "ThreadPool.h"
+#include "dynamic_thread_pool.h"
 #include "Socket.h"
 #include "NonCopyable.h"
 #include "Settings.h"
+#include "MyDic.h"
 #include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -26,8 +27,7 @@ public:
 	void start();
 private:
 	Socket sockfd_;
-	MyDic mydic_;
-	ThreadPool threadPool_;
+	DynamicThreadPool *m_pThreadPool_;
 	EpollPoller poller_;
 };
 

@@ -27,7 +27,7 @@ public:
 	std::string		m_strLogPath;
 	int				m_intLogLevel;	
 public:
-	SettingData(std::string strFilePat);
-	//void LoadSetting(std::string strFilePath);
+	//SettingData(std::string strFilePat);
+	int LoadSetting(std::string strFilePath);
 };
 }

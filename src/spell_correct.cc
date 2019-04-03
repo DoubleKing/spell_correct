@@ -21,9 +21,21 @@
 #define MAXBUFSIZE 1024
 char g_szWorkPath[MAXBUFSIZE];
 wd::Logger g_log;
+long g_ncpus = 0;
+wd::SettingData g_SettingData;
+
+void init_ncpus()
+{
+  g_ncpus = sysconf(_SC_NPROCESSORS_CONF);
+  if (g_ncpus < 1 || g_ncpus > INT32_MAX) {
+    g_ncpus = 1;
+  }
+}
 
 
-void daemonize(void) {
+
+void daemonize(void) 
+{
     int fd;
 
     if (fork() != 0) exit(0); /* parent exits */
@@ -69,16 +81,18 @@ void getWorkPath()
 int main(int argc, char *argv[])
 {
 	//repeatCheck();
+	init_ncpus();
 	if(argc > 1 && strcmp(argv[1],"daemon") == 0)
 		daemonize();
 	getWorkPath();
 	
 	std::string strSettingPath = std::string(g_szWorkPath) + std::string("/conf/spell_correct.ini"); 
 	std::cout << strSettingPath << std::endl;
-	wd::SettingData setting_data(strSettingPath);
-	g_log.init(setting_data.m_intLogLevel,setting_data.m_strLogPath);
+	//wd::SettingData setting_data(strSettingPath);
+	g_SettingData.LoadSetting(strSettingPath);
+	g_log.init(g_SettingData.m_intLogLevel,g_SettingData.m_strLogPath);
 	g_log.addLog(5, "main", "test:%d", 4);
-	wd::TcpServer server(setting_data);
+	wd::TcpServer server(g_SettingData);
 	server.start();
 
 	return 0;
