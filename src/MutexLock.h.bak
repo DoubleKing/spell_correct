@@ -21,11 +21,9 @@ public:
 
 	int lock();
 	void unlock();
-	bool isLocked();
 	pthread_mutex_t* getMutexPtr();
 private:
 	pthread_mutex_t mutex_;
-	bool isLocking_;
 };
 
 class MutexLockGuard//把MutexLock上锁解锁交给Guard来做防止中断异常

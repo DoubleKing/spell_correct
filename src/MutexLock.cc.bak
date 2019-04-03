@@ -10,43 +10,41 @@ extern wd::Logger g_log;
 namespace wd
 {
 MutexLock::MutexLock()
-	:isLocking_(false)
 {
 	if(0 != pthread_mutex_init(&mutex_,NULL))
 	{
 		g_log.addLog(5, "MutexLock", "pthread_mutex_init failed");
-		exit(EXIT_FAILURE);
+		abort();
 	}
 }
 
 MutexLock::~MutexLock()
 {
-	pthread_mutex_destroy(&mutex_);
+	if(0 != pthread_mutex_destroy(&mutex_))
+	{
+		g_log.addLog(5, "MutexLock", "pthread_mutex_destroy failed");
+		abort();
+	}
 }
 
 int MutexLock::lock()
 {
-	g_log.addLog(5, "MutexLock:addr", "&mutex_:%x",&mutex_);
 	if(0 != pthread_mutex_lock(&mutex_))
 	{
 		g_log.addLog(5, "MutexLock", "pthread_mutex_lock failed");
 		return RET_ERROR;
 	}
-	g_log.addLog(5, "MutexLock", "pthread_mutex_lock success");
-	isLocking_ = true;
 	return RET_OK;
 }
 
 void  MutexLock::unlock()
 {
-	pthread_mutex_unlock(&mutex_);
-	g_log.addLog(5, "MutexLock", "pthread_mutex_unlock success");
-	isLocking_ = false;
-}
+	if(0 != pthread_mutex_unlock(&mutex_))
+	{
+		g_log.addLog(5, "MutexLock", "pthread_mutex_lock failed");
+		abort();
+	}
 
-bool MutexLock::isLocked()
-{
-	return isLocking_;
 }
 
 pthread_mutex_t* MutexLock::getMutexPtr()
