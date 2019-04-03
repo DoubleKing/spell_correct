@@ -1,5 +1,5 @@
 /*
-	动态线程池代码参考grpc
+	鍔ㄦ�佺嚎绋嬫睜浠ｇ爜鍙傝�僩rpc
 */
 
 #include "dynamic_thread_pool.h"
