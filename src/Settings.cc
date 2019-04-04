@@ -5,7 +5,7 @@
 	> Created Time: Thu 14 May 2015 07:12:12 PM PDT
  ************************************************************************/
 #include "Settings.h"
-#include "../tools/ini_parse/inifile.h"
+#include "../tools/inifile/inifile.h"
 using namespace inifile;
 namespace wd
 {

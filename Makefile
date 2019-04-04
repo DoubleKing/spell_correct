@@ -1,7 +1,7 @@
 SRC_DIR:= ./src/
 SRCS:=$(wildcard ./src/*.cc)
 OBJS:=$(SRCS:%.cc=%.o)
-LIBS:= -lpthread -L ./tools/ini_parse/ -linifile -L ./tools/cJSON/ -lcJSON
+LIBS:= -lpthread -L ./tools/inifile/ -linifile -L ./tools/cJSON/ -lcJSON
 CXX:= g++
 CXXFLAGS:=  -g -std=c++11 $(LIBS) -Wno-unused-function
 
