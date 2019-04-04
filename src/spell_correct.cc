@@ -7,6 +7,7 @@
 #include "TcpServer.h"
 #include "MyDic.h"
 #include "log.h"
+#include "lru_cache.h"
 #include <iostream>
 #include <unistd.h>
 #include <sys/types.h>
@@ -18,11 +19,12 @@
 
 
 
-#define MAXBUFSIZE 1024
-char g_szWorkPath[MAXBUFSIZE];
-wd::Logger g_log;
-long g_ncpus = 0;
+#define 		MAXBUFSIZE 1024
+char 			g_szWorkPath[MAXBUFSIZE];
+wd::Logger 		g_log;
+long 			g_ncpus = 0;
 wd::SettingData g_SettingData;
+wd::LRUCache<std::string,std::string>	g_LRUCache;
 
 void init_ncpus()
 {
@@ -91,7 +93,7 @@ int main(int argc, char *argv[])
 	//wd::SettingData setting_data(strSettingPath);
 	g_SettingData.LoadSetting(strSettingPath);
 	g_log.init(g_SettingData.m_intLogLevel,g_SettingData.m_strLogPath);
-	g_log.addLog(5, "main", "test:%d", 4);
+	g_LRUCache.init(20000);
 	wd::TcpServer server(g_SettingData);
 	server.start();
 

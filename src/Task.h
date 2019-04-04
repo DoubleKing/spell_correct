@@ -7,6 +7,7 @@
 #pragma once
 
 #include "MyDic.h"
+#include "lru_cache.h"
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <queue>

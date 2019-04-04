@@ -1,4 +1,4 @@
-/*************************************************************************
+﻿/*************************************************************************
 	> File Name: Task.cc
 	> Author: DoubleKing
 	> Mail:971774262@qq.com 
@@ -7,6 +7,8 @@
 #include <string.h>
 #include "Task.h"
 #include "../tools/cJSON/cJSON.h"
+
+extern wd::LRUCache<std::string,std::string> g_LRUCache;
 namespace wd
 {
 
@@ -77,9 +79,17 @@ Task::Task(const std::string &expr ,int sockfd ,MyDic &mydic)
 
 void Task:: execute()
 {
-	query_idx_table();
-	
-	response();
+	std::string tmp;
+	g_LRUCache.get(expr_, tmp);
+	if(!tmp.empty())
+	{
+		send(sockfd_, tmp.c_str(), tmp.size(), 0);
+	}
+	else
+	{
+		query_idx_table();
+		response();
+	}
 }
 void Task::response()
 {
@@ -92,6 +102,7 @@ void Task::response()
 	}
 	char * ret = cJSON_Print(JsonArray);
 	send(sockfd_, ret, strlen(ret),0);
+	g_LRUCache.set(expr_, ret);
 	free(ret);
 	cJSON_Delete(JsonArray);
 	
