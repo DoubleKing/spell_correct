@@ -129,7 +129,7 @@ bool LRUCache<T1,T2>::remove(const T1& key)
 	return false;
 }
 
-//Íâ²¿»¥³â
+//å¤–éƒ¨äº’æ–¥
 template<class T1, class T2>
 bool LRUCache<T1,T2>::lru_remove()
 {

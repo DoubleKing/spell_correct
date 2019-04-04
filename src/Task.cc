@@ -178,8 +178,10 @@ void Task::satistic(std::set<int> &iset)
 	for(int idx : iset)
 	{
 		int dis = distance(mydic_.dic_[idx].first);
-		if(dis < 3)
+		if(dis < 5 && 
+				m_setResultWord.find(mydic_.dic_[idx].first) == m_setResultWord.end())
 		{
+			m_setResultWord.insert(mydic_.dic_[idx].first);
 			MyResult myres;
 			myres.word_ = mydic_.dic_[idx].first;
 			myres.dist_ = dis;

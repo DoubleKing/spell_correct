@@ -65,5 +65,7 @@ private:
 	int sockfd_;
 	MyDic &mydic_;
 	std::priority_queue<MyResult, std::vector<MyResult> ,MyCompare> que_res_;
+	//避免优先级队列元素重复
+	std::set<std::string> m_setResultWord;
 };
 }
